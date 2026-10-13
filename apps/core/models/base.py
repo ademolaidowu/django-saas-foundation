@@ -182,5 +182,10 @@ class AuditTrailMixin(models.Model):
     def delete(self, deleted_by: Any = None, *args: Any, **kwargs: Any) -> None:  # type: ignore[override]
         if deleted_by is None:
             raise ValueError("deleted_by is required for soft delete")
-        self.deleted_by = deleted_by
+        # Delegate the `deleted_at` stamp to BaseModel.delete, then persist
+        # the actor FK. Keeping the two writes separate so django-stubs
+        # doesn't infer `deleted_at` as an AuditTrailMixin field (which
+        # would conflict with BaseModel's declaration).
         super().delete(*args, **kwargs)
+        self.deleted_by = deleted_by
+        self.save(update_fields=["deleted_by"])

@@ -84,7 +84,7 @@ class RoleService:
                 raise APIServiceError(error_code=RoleError.NameTaken)
             role.name = name
             changed_fields.append("name")
-        if description is not None:
+        if description is not None and description != role.description:
             role.description = description
             changed_fields.append("description")
 
