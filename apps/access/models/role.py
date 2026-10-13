@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from django.db import models
 from django.db.models import Q
+from simple_history.models import HistoricalRecords
 
 from core.models.base import AuditTrailMixin, BaseModel
 from core.models.tenancy import TenantScopedModel
@@ -46,6 +47,8 @@ class Role(AuditTrailMixin, TenantScopedModel):
         through="access.RolePermission",
         related_name="roles",
     )
+
+    history = HistoricalRecords(table_name="roles_history", excluded_fields=["modified_at"])
 
     def __str__(self) -> str:
         return f"{self.name} ({self.organization_id})"

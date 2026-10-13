@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from django.contrib import admin
+from simple_history.admin import SimpleHistoryAdmin
 
 from access.models.assignment import RoleAssignment
 from access.models.permission import Permission
@@ -28,7 +29,7 @@ class RolePermissionInline(admin.TabularInline):
 
 
 @admin.register(Role)
-class RoleAdmin(admin.ModelAdmin):
+class RoleAdmin(SimpleHistoryAdmin):
     list_display = ("name", "code", "organization", "is_system", "created_at")
     list_filter = ("is_system", "organization")
     search_fields = ("name", "code", "organization__name")
@@ -38,7 +39,7 @@ class RoleAdmin(admin.ModelAdmin):
 
 
 @admin.register(RoleAssignment)
-class RoleAssignmentAdmin(admin.ModelAdmin):
+class RoleAssignmentAdmin(SimpleHistoryAdmin):
     list_display = ("account", "role", "is_active", "created_at")
     list_filter = ("is_active",)
     search_fields = ("account__user__email", "role__name")

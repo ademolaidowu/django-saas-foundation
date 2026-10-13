@@ -10,11 +10,13 @@ INSTALLED_APPS = [
     # Third-party
     "rest_framework",
     "knox",
+    "simple_history",
     # Local
     "core",
     "tenants",
     "accounts",
     "access",
+    "projects",
 ]
 
 AUTH_USER_MODEL = "accounts.User"
@@ -31,6 +33,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "simple_history.middleware.HistoryRequestMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -79,3 +82,11 @@ AUTH_COOKIE_SECURE = False
 AUTH_COOKIE_SAMESITE = "Lax"
 AUTH_COOKIE_MAX_AGE = 60 * 60 * 24 * 7  # 7 days
 AUTH_COOKIE_MAX_AGE_REMEMBERED = 60 * 60 * 24 * 30  # 30 days
+
+# ----------------------------------------------------------------------------
+# django-simple-history. Reverting is disabled per the project spec; the API
+# surface is audit-only. UUID history IDs match our `public_id` discipline.
+# ----------------------------------------------------------------------------
+SIMPLE_HISTORY_REVERT_DISABLED = True
+SIMPLE_HISTORY_HISTORY_ID_USE_UUID = True
+SIMPLE_HISTORY_FILEFIELD_TO_CHARFIELD = True

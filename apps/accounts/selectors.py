@@ -12,7 +12,7 @@ from accounts.models.account import Account
 from accounts.models.user import User
 
 if TYPE_CHECKING:
-    pass
+    from tenants.models.organization import Organization
 
 
 class UserSelectors:
@@ -51,3 +51,12 @@ class AccountSelectors:
             .order_by("-is_primary", "joined_at")
             .first()
         )
+
+    @staticmethod
+    def get_by_user_and_organization(user: User, organization: Organization) -> Account | None:
+        """The actor's Account on a specific org — used by object-level policies."""
+        return Account.records.filter(
+            user=user,
+            organization=organization,
+            status=AccountStatus.ACTIVE,
+        ).first()

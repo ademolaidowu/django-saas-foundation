@@ -13,6 +13,7 @@ dependencies = [
     "uuid-utils>=0.9",
     "psycopg[binary]>=3.2",
     "django-rest-knox>=5.1.0",
+    "django-simple-history>=3.13.0",
 ]
 
 [dependency-groups]
@@ -77,9 +78,10 @@ python_version = "3.12"
 plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main"]
 check_untyped_defs = true
 warn_redundant_casts = true
+disable_error_code = ["import-untyped"]
 
 [[tool.mypy.overrides]]
-module = ["uuid_utils.*", "split_settings.*", "environ.*", "knox.*"]
+module = ["uuid_utils.*", "split_settings.*", "environ.*", "knox.*", "simple_history.*"]
 ignore_missing_imports = true
 
 # split-settings injects globals (`env`, cross-file names) at include time;
@@ -91,7 +93,7 @@ ignore_errors = true
 # Migrations use custom settings symbols (KNOX_TOKEN_MODEL) that django-stubs
 # can't see; the file is auto-generated anyway.
 [[tool.mypy.overrides]]
-module = ["accounts.migrations.*", "tenants.migrations.*"]
+module = ["accounts.migrations.*", "tenants.migrations.*", "access.migrations.*", "projects.migrations.*"]
 ignore_errors = true
 
 [tool.django-stubs]

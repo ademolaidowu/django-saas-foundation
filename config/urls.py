@@ -11,5 +11,6 @@ urlpatterns = [
     path("api/health/", health, name="health"),
     path("api/auth/", include("accounts.urls", namespace="accounts")),
     path("api/access/", include("access.urls", namespace="access")),
+    path("api/", include("projects.urls", namespace="projects")),
     path("admin/", admin.site.urls),
 ]

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from django.db import models
 from django.db.models import Q
+from simple_history.models import HistoricalRecords
 
 from core.models.base import AuditTrailMixin, BaseModel
 
@@ -44,6 +45,11 @@ class RoleAssignment(AuditTrailMixin, BaseModel):
         related_name="assignments",
     )
     is_active = models.BooleanField(default=True)
+
+    history = HistoricalRecords(
+        table_name="role_assignments_history",
+        excluded_fields=["modified_at"],
+    )
 
     def __str__(self) -> str:
         return f"RoleAssignment({self.account_id} → {self.role_id})"
