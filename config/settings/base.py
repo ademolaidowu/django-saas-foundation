@@ -14,6 +14,7 @@ INSTALLED_APPS = [
     "core",
     "tenants",
     "accounts",
+    "access",
 ]
 
 AUTH_USER_MODEL = "accounts.User"

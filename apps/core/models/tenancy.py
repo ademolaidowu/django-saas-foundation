@@ -180,5 +180,5 @@ class TenantScopedModel(BaseModel):
         db_index=True,
     )
 
-    objects = TenantManager()  # type: ignore[assignment]
-    records = TenantRecordsManager()  # type: ignore[assignment]
+    objects = TenantManager()  # type: ignore[assignment,misc]
+    records = TenantRecordsManager()  # type: ignore[assignment,misc]

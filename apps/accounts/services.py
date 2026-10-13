@@ -92,6 +92,22 @@ class RegistrationService:
             created_by=user,
             is_primary=True,
         )
+
+        # Phase 3: seed the four system roles for the new org and bind the
+        # account to Owner. Imports are inside the function to keep the
+        # accounts app importable before `access` is installed (e.g. during
+        # the Phase 2 → Phase 3 migration bootstrap).
+        from access.services import RoleAssignmentService, RoleService
+
+        system_roles = RoleService.create_system_roles_for_organization(
+            organization=organization,
+            created_by=user,
+        )
+        RoleAssignmentService.assign(
+            account=account,
+            role=system_roles["owner"],
+            assigned_by=user,
+        )
         return user, account
 
 
