@@ -2,6 +2,10 @@
 
 DEBUG = False
 
+if SECRET_KEY in ("", "django-insecure-change-me-in-production"):
+    raise RuntimeError("SECRET_KEY must be set to a strong value in production (set via env).")
+
+SECURE_REFERRER_POLICY = "same-origin"
 SECURE_HSTS_SECONDS = 60 * 60 * 24 * 30
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True

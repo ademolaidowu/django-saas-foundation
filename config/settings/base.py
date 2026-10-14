@@ -1,5 +1,9 @@
 """Core Django settings: apps, middleware, auth, i18n, static."""
 
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -9,6 +13,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # Third-party
     "rest_framework",
+    "drf_spectacular",
     "knox",
     "simple_history",
     # Local
@@ -27,6 +32,9 @@ KNOX_TOKEN_MODEL = "knox.AuthToken"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    # WhiteNoise serves static files inside gunicorn. Must sit immediately
+    # after SecurityMiddleware per the project's docs.
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -69,6 +77,12 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
+}
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -90,3 +104,32 @@ AUTH_COOKIE_MAX_AGE_REMEMBERED = 60 * 60 * 24 * 30  # 30 days
 SIMPLE_HISTORY_REVERT_DISABLED = True
 SIMPLE_HISTORY_HISTORY_ID_USE_UUID = True
 SIMPLE_HISTORY_FILEFIELD_TO_CHARFIELD = True
+
+# ----------------------------------------------------------------------------
+# Redis cache. Spec says "Redis 7 (cache only for now)" — Django's built-in
+# RedisCache backend is enough; no django-redis dep needed.
+# ----------------------------------------------------------------------------
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": env("REDIS_URL", default="redis://localhost:6379/0"),
+    },
+}
+
+# ----------------------------------------------------------------------------
+# drf-spectacular — OpenAPI schema + Swagger UI.
+# ----------------------------------------------------------------------------
+SPECTACULAR_SETTINGS = {
+    "TITLE": "django-saas-foundation",
+    "DESCRIPTION": (
+        "A reusable Django SaaS foundation with multi-tenancy, "
+        "account-scoped authentication, RBAC, audit trails, and tenant-isolated APIs."
+    ),
+    "VERSION": "0.1.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "COMPONENT_SPLIT_REQUEST": True,
+    "ENUM_NAME_OVERRIDES": {
+        "AccountStatusEnum": "accounts.constants.AccountStatus.choices",
+        "RecordSourceEnum": "core.models.base.BaseModel.RecordSource.choices",
+    },
+}
