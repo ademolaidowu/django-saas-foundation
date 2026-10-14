@@ -39,7 +39,7 @@ class TestRoleCrud:
             {
                 "name": "Project Lead",
                 "description": "Can CRUD projects.",
-                "permission_codes": ["projects.read", "projects.create", "projects.update"],
+                "permission_codes": ["projects:read", "projects:create", "projects:update"],
             },
             format="json",
         )
@@ -47,7 +47,7 @@ class TestRoleCrud:
         body = response.json()["data"]
         assert body["name"] == "Project Lead"
         assert body["is_system"] is False
-        assert set(body["permission_codes"]) == {"projects.read", "projects.create", "projects.update"}
+        assert set(body["permission_codes"]) == {"projects:read", "projects:create", "projects:update"}
 
     def test_duplicate_name_rejected(self, owner_client, system_roles_for):
         client, user, account, alpha = owner_client
@@ -95,7 +95,7 @@ class TestRoleCrud:
 
         response = client.post(
             ROLES_URL,
-            {"name": "Bad Role", "permission_codes": ["does.not.exist"]},
+            {"name": "Bad Role", "permission_codes": ["does:not:exist"]},
             format="json",
         )
         assert response.status_code == 400
@@ -106,14 +106,14 @@ class TestRoleCrud:
         system_roles_for(alpha, user)
         created = client.post(
             ROLES_URL,
-            {"name": "Flexible", "permission_codes": ["projects.read"]},
+            {"name": "Flexible", "permission_codes": ["projects:read"]},
             format="json",
         ).json()["data"]
 
         response = client.patch(
             f"{ROLES_URL}{created['id']}/",
-            {"permission_codes": ["tasks.read", "tasks.create"]},
+            {"permission_codes": ["tasks:read", "tasks:create"]},
             format="json",
         )
         assert response.status_code == 200
-        assert sorted(response.json()["data"]["permission_codes"]) == ["tasks.create", "tasks.read"]
+        assert sorted(response.json()["data"]["permission_codes"]) == ["tasks:create", "tasks:read"]

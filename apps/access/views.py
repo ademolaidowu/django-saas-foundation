@@ -33,7 +33,7 @@ from core.exceptions import APIServiceError
 class PermissionsListView(APIView):
     permission_classes = [IsAuthenticated]
 
-    @require_permission("permissions.read")
+    @require_permission("permissions:read")
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         permissions = PermissionSelectors.all()
         return Response(PermissionOutputSerializer(permissions, many=True).data)
@@ -42,12 +42,12 @@ class PermissionsListView(APIView):
 class RolesListView(APIView):
     permission_classes = [IsAuthenticated]
 
-    @require_permission("roles.read")
+    @require_permission("roles:read")
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         roles = RoleSelectors.list_for_organization(request.organization)  # type: ignore[attr-defined]
         return Response(RoleOutputSerializer(roles, many=True).data)
 
-    @require_permission("roles.create")
+    @require_permission("roles:create")
     def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         serializer = RoleCreateInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -77,12 +77,12 @@ class RoleDetailView(APIView):
             )
         return role
 
-    @require_permission("roles.read")
+    @require_permission("roles:read")
     def get(self, request: Request, public_id, *args: Any, **kwargs: Any) -> Response:
         role = self._get(request, public_id)
         return Response(RoleOutputSerializer(role).data)
 
-    @require_permission("roles.update")
+    @require_permission("roles:update")
     def patch(self, request: Request, public_id, *args: Any, **kwargs: Any) -> Response:
         role = self._get(request, public_id)
         serializer = RoleUpdateInputSerializer(data=request.data, partial=True)
@@ -100,7 +100,7 @@ class RoleDetailView(APIView):
         role = RoleSelectors.get_by_public_id(request.organization, public_id)  # type: ignore[attr-defined]
         return Response(RoleOutputSerializer(role).data)
 
-    @require_permission("roles.delete")
+    @require_permission("roles:delete")
     def delete(self, request: Request, public_id, *args: Any, **kwargs: Any) -> Response:
         role = self._get(request, public_id)
         RoleService.delete_role(role=role, deleted_by=request.user)  # type: ignore[arg-type]
@@ -110,7 +110,7 @@ class RoleDetailView(APIView):
 class RoleAssignmentCreateView(APIView):
     permission_classes = [IsAuthenticated]
 
-    @require_permission("role_assignments.create")
+    @require_permission("role_assignments:create")
     def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         serializer = RoleAssignmentCreateInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -148,7 +148,7 @@ class RoleAssignmentCreateView(APIView):
 class RoleAssignmentRevokeView(APIView):
     permission_classes = [IsAuthenticated]
 
-    @require_permission("role_assignments.delete")
+    @require_permission("role_assignments:delete")
     def delete(self, request: Request, public_id, *args: Any, **kwargs: Any) -> Response:
         assignment = RoleAssignmentSelectors.get_by_public_id(public_id)
         if (

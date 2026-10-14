@@ -13,7 +13,7 @@ from access.decorators import require_permission
 class ProbeView(APIView):
     permission_classes = [IsAuthenticated]
 
-    @require_permission("permissions.read")
+    @require_permission("permissions:read")
     def get(self, request, *args, **kwargs):
         return Response({"ok": True})
 
@@ -39,8 +39,8 @@ class TestRequirePermission:
 
     def test_denies_with_403_when_missing(self, authed_client, system_roles_for, grant, two_orgs):
         """
-        Member role lacks `permissions.read` (Member has domain CRUD codes
-        plus `accounts.read` — see registry.MEMBER_CODES).
+        Member role lacks `permissions:read` (Member has domain CRUD codes
+        plus `accounts:read` — see registry.MEMBER_CODES).
         """
         client, user, account = authed_client
         alpha, _ = two_orgs

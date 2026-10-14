@@ -19,8 +19,8 @@ class TestPermissionSelectors:
     def test_all_returns_seeded_rows(self):
         results = list(PermissionSelectors.all())
         codes = {p.code for p in results}
-        assert "projects.read" in codes
-        assert "roles.create" in codes
+        assert "projects:read" in codes
+        assert "roles:create" in codes
 
     def test_account_has_permission_true(self, user_factory, account_factory, two_orgs):
         alpha, _ = two_orgs
@@ -28,13 +28,13 @@ class TestPermissionSelectors:
         account = account_factory(user=user, organization=alpha)
         roles = RoleService.create_system_roles_for_organization(organization=alpha, created_by=user)
         RoleAssignmentService.assign(account=account, role=roles["owner"], assigned_by=user)
-        assert PermissionSelectors.account_has_permission(account, "projects.read")
+        assert PermissionSelectors.account_has_permission(account, "projects:read")
 
     def test_account_has_permission_false_when_no_role(self, user_factory, account_factory, two_orgs):
         alpha, _ = two_orgs
         user = user_factory(email="x@example.com")
         account = account_factory(user=user, organization=alpha)
-        assert not PermissionSelectors.account_has_permission(account, "projects.read")
+        assert not PermissionSelectors.account_has_permission(account, "projects:read")
 
     def test_account_has_permission_false_when_inactive(self, user_factory, account_factory, two_orgs):
         alpha, _ = two_orgs
@@ -44,7 +44,7 @@ class TestPermissionSelectors:
         a = RoleAssignmentService.assign(account=account, role=roles["owner"], assigned_by=user)
         a.is_active = False
         a.save(update_fields=["is_active"])
-        assert not PermissionSelectors.account_has_permission(account, "projects.read")
+        assert not PermissionSelectors.account_has_permission(account, "projects:read")
 
 
 @pytest.mark.django_db

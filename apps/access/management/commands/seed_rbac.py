@@ -28,7 +28,7 @@ class Command(BaseCommand):
             _, was_created = Permission.objects.update_or_create(
                 code=p.code,
                 defaults={
-                    "module": p.code.split(".", 1)[0],
+                    "module": p.code.split(":", 1)[0],
                     "description": p.description,
                 },
             )

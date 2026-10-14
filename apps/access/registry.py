@@ -1,11 +1,12 @@
 """
 Single source of truth for permission codes and system-role → permission splits.
 
-Permissions are keyed by dotted code (`<module>.<action>`). `seed_rbac` upserts
-these into the `access.Permission` table. System roles are per-organization
-convenience defaults seeded by `RoleService.create_system_roles_for_organization`.
+Permissions are keyed by colon-separated code (`<module>:<action>`). `seed_rbac`
+upserts these into the `access.Permission` table. System roles are
+per-organization convenience defaults seeded by
+`RoleService.create_system_roles_for_organization`.
 
-Phase 4 placeholders for `projects.*` and `tasks.*` are declared here so that
+Phase 4 placeholders for `projects:*` and `tasks:*` are declared here so that
 the Member/Viewer splits are complete out of the box. When Phase 4 lands, the
 views just use codes that already exist.
 """
@@ -33,32 +34,32 @@ class SystemRoleDef:
 
 PERMISSIONS: tuple[PermissionDef, ...] = (
     # access
-    PermissionDef("roles.read", "List and view roles."),
-    PermissionDef("roles.create", "Create custom roles."),
-    PermissionDef("roles.update", "Rename or edit custom roles."),
-    PermissionDef("roles.delete", "Delete custom roles."),
-    PermissionDef("role_assignments.create", "Assign roles to accounts."),
-    PermissionDef("role_assignments.delete", "Revoke role assignments."),
-    PermissionDef("permissions.read", "List all permission codes."),
-    PermissionDef("accounts.read", "View members of the organization."),
+    PermissionDef("roles:read", "List and view roles."),
+    PermissionDef("roles:create", "Create custom roles."),
+    PermissionDef("roles:update", "Rename or edit custom roles."),
+    PermissionDef("roles:delete", "Delete custom roles."),
+    PermissionDef("role_assignments:create", "Assign roles to accounts."),
+    PermissionDef("role_assignments:delete", "Revoke role assignments."),
+    PermissionDef("permissions:read", "List all permission codes."),
+    PermissionDef("accounts:read", "View members of the organization."),
     # organization (reserved for future billing / destroy)
-    PermissionDef("organization.manage", "Owner-only organization-level operations."),
+    PermissionDef("organization:manage", "Owner-only organization-level operations."),
     # Phase 4 placeholders — declared now so system-role splits are complete.
-    PermissionDef("projects.read", "View projects."),
-    PermissionDef("projects.create", "Create projects."),
-    PermissionDef("projects.update", "Edit projects."),
-    PermissionDef("projects.delete", "Delete projects."),
-    PermissionDef("tasks.read", "View tasks."),
-    PermissionDef("tasks.create", "Create tasks."),
-    PermissionDef("tasks.update", "Edit tasks (assign, change status, due date)."),
-    PermissionDef("tasks.delete", "Delete tasks."),
+    PermissionDef("projects:read", "View projects."),
+    PermissionDef("projects:create", "Create projects."),
+    PermissionDef("projects:update", "Edit projects."),
+    PermissionDef("projects:delete", "Delete projects."),
+    PermissionDef("tasks:read", "View tasks."),
+    PermissionDef("tasks:create", "Create tasks."),
+    PermissionDef("tasks:update", "Edit tasks (assign, change status, due date)."),
+    PermissionDef("tasks:delete", "Delete tasks."),
 )
 
 ALL_CODES: tuple[str, ...] = tuple(p.code for p in PERMISSIONS)
-READ_CODES: tuple[str, ...] = tuple(c for c in ALL_CODES if c.endswith(".read"))
-ADMIN_CODES: tuple[str, ...] = tuple(c for c in ALL_CODES if c != "organization.manage")
+READ_CODES: tuple[str, ...] = tuple(c for c in ALL_CODES if c.endswith(":read"))
+ADMIN_CODES: tuple[str, ...] = tuple(c for c in ALL_CODES if c != "organization:manage")
 MEMBER_CODES: tuple[str, ...] = tuple(
-    c for c in ALL_CODES if c.startswith(("projects.", "tasks.")) or c == "accounts.read"
+    c for c in ALL_CODES if c.startswith(("projects:", "tasks:")) or c == "accounts:read"
 )
 
 

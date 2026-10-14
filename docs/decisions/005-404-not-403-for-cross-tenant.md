@@ -22,7 +22,7 @@ The two code paths never overlap: tenancy is enforced first (via the auth class 
 ## Consequences
 
 - **Enumeration-safe.** A client that doesn't belong to Org Bravo cannot discover whether a given `public_id` points to a Bravo-owned resource. They get 404 whether the ID exists in Bravo, exists in a third org, or doesn't exist at all.
-- **Honest.** Within your own org, 403 means what it says: the resource is there, you're authenticated, you lack a permission. No obfuscation; the frontend can show "ask your admin for the `projects.create` permission" rather than a misleading "not found."
+- **Honest.** Within your own org, 403 means what it says: the resource is there, you're authenticated, you lack a permission. No obfuscation; the frontend can show "ask your admin for the `projects:create` permission" rather than a misleading "not found."
 - **Simple mental model.** "Different org → 404. Same org, wrong permission → 403." No judgment calls at the view layer.
 - **UUIDs make it workable.** Public IDs are UUIDv7 (per ADR 004), so an attacker can't guess them even if they knew the ID space existed. A sequential integer would make 404 a weak defense.
 

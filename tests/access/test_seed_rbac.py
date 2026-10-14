@@ -20,7 +20,7 @@ class TestSeedRBAC:
     def test_module_extracted_from_code(self):
         call_command("seed_rbac", verbosity=0)
         for p in Permission.objects.all():
-            assert p.code.startswith(f"{p.module}.")
+            assert p.code.startswith(f"{p.module}:")
 
     def test_idempotent(self):
         call_command("seed_rbac", verbosity=0)

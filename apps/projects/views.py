@@ -42,7 +42,7 @@ def _as_uuid(raw: str | None) -> uuid.UUID | None:
 class ProjectsListView(APIView):
     permission_classes = [IsAuthenticated]
 
-    @require_permission("projects.read")
+    @require_permission("projects:read")
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         organization = request.organization  # type: ignore[attr-defined]
         projects = ProjectSelectors.list_for_organization(
@@ -53,7 +53,7 @@ class ProjectsListView(APIView):
         page: Any = paginator.paginate_queryset(projects, request)
         return paginator.get_paginated_response(ProjectOutputSerializer(page, many=True).data)
 
-    @require_permission("projects.create")
+    @require_permission("projects:create")
     def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         serializer = ProjectCreateInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -83,12 +83,12 @@ class ProjectDetailView(APIView):
             )
         return project
 
-    @require_permission("projects.read")
+    @require_permission("projects:read")
     def get(self, request: Request, public_id, *args: Any, **kwargs: Any) -> Response:
         project = self._get(request, public_id)
         return Response(ProjectOutputSerializer(project).data)
 
-    @require_permission("projects.update")
+    @require_permission("projects:update")
     def patch(self, request: Request, public_id, *args: Any, **kwargs: Any) -> Response:
         project = self._get(request, public_id)
         serializer = ProjectUpdateInputSerializer(data=request.data, partial=True)
@@ -102,7 +102,7 @@ class ProjectDetailView(APIView):
         )
         return Response(ProjectOutputSerializer(project).data)
 
-    @require_permission("projects.delete")
+    @require_permission("projects:delete")
     def delete(self, request: Request, public_id, *args: Any, **kwargs: Any) -> Response:
         project = self._get(request, public_id)
         ProjectService.delete_project(project=project, actor=request.user)  # type: ignore[arg-type]
@@ -112,7 +112,7 @@ class ProjectDetailView(APIView):
 class ProjectHistoryView(APIView):
     permission_classes = [IsAuthenticated]
 
-    @require_permission("projects.read")
+    @require_permission("projects:read")
     def get(self, request: Request, public_id, *args: Any, **kwargs: Any) -> Response:
         organization = request.organization  # type: ignore[attr-defined]
         project = ProjectSelectors.get_by_public_id(organization, public_id)
@@ -130,7 +130,7 @@ class ProjectHistoryView(APIView):
 class TasksListView(APIView):
     permission_classes = [IsAuthenticated]
 
-    @require_permission("tasks.read")
+    @require_permission("tasks:read")
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         organization = request.organization  # type: ignore[attr-defined]
         tasks = TaskSelectors.list_for_organization(
@@ -143,7 +143,7 @@ class TasksListView(APIView):
         page: Any = paginator.paginate_queryset(tasks, request)
         return paginator.get_paginated_response(TaskOutputSerializer(page, many=True).data)
 
-    @require_permission("tasks.create")
+    @require_permission("tasks:create")
     def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         serializer = TaskCreateInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -176,12 +176,12 @@ class TaskDetailView(APIView):
             )
         return task
 
-    @require_permission("tasks.read")
+    @require_permission("tasks:read")
     def get(self, request: Request, public_id, *args: Any, **kwargs: Any) -> Response:
         task = self._get(request, public_id)
         return Response(TaskOutputSerializer(task).data)
 
-    @require_permission("tasks.update")
+    @require_permission("tasks:update")
     def patch(self, request: Request, public_id, *args: Any, **kwargs: Any) -> Response:
         task = self._get(request, public_id)
         serializer = TaskUpdateInputSerializer(data=request.data, partial=True)
@@ -193,7 +193,7 @@ class TaskDetailView(APIView):
         )
         return Response(TaskOutputSerializer(task).data)
 
-    @require_permission("tasks.delete")
+    @require_permission("tasks:delete")
     def delete(self, request: Request, public_id, *args: Any, **kwargs: Any) -> Response:
         task = self._get(request, public_id)
         TaskService.delete_task(task=task, actor=request.user)  # type: ignore[arg-type]

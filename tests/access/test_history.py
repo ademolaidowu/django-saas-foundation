@@ -33,7 +33,7 @@ class TestRoleHistory:
 
         response = client.post(
             ROLES_URL,
-            {"name": "Custom", "permission_codes": ["projects.read"]},
+            {"name": "Custom", "permission_codes": ["projects:read"]},
             format="json",
         )
         assert response.status_code == 201

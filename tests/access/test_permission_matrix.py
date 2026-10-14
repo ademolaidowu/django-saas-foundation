@@ -26,54 +26,54 @@ DENY = "deny"
 
 # (method, url, body) → tested per role
 ENDPOINTS: dict[str, tuple[str, str, dict | None]] = {
-    "permissions.list": ("GET", "/api/access/permissions/", None),
-    "roles.list": ("GET", "/api/access/roles/", None),
-    "roles.create": (
+    "permissions:list": ("GET", "/api/access/permissions/", None),
+    "roles:list": ("GET", "/api/access/roles/", None),
+    "roles:create": (
         "POST",
         "/api/access/roles/",
         {"name": "Scratch", "permission_codes": []},
     ),
-    "projects.list": ("GET", "/api/projects/", None),
-    "projects.create": (
+    "projects:list": ("GET", "/api/projects/", None),
+    "projects:create": (
         "POST",
         "/api/projects/",
         {"name": "P", "status": "active"},
     ),
-    "tasks.list": ("GET", "/api/tasks/", None),
+    "tasks:list": ("GET", "/api/tasks/", None),
 }
 
 MATRIX: dict[str, dict[str, str]] = {
     SystemRoleCode.OWNER: {
-        "permissions.list": ALLOW,
-        "roles.list": ALLOW,
-        "roles.create": ALLOW,
-        "projects.list": ALLOW,
-        "projects.create": ALLOW,
-        "tasks.list": ALLOW,
+        "permissions:list": ALLOW,
+        "roles:list": ALLOW,
+        "roles:create": ALLOW,
+        "projects:list": ALLOW,
+        "projects:create": ALLOW,
+        "tasks:list": ALLOW,
     },
     SystemRoleCode.ADMIN: {
-        "permissions.list": ALLOW,
-        "roles.list": ALLOW,
-        "roles.create": ALLOW,
-        "projects.list": ALLOW,
-        "projects.create": ALLOW,
-        "tasks.list": ALLOW,
+        "permissions:list": ALLOW,
+        "roles:list": ALLOW,
+        "roles:create": ALLOW,
+        "projects:list": ALLOW,
+        "projects:create": ALLOW,
+        "tasks:list": ALLOW,
     },
     SystemRoleCode.MEMBER: {
-        "permissions.list": DENY,
-        "roles.list": DENY,
-        "roles.create": DENY,
-        "projects.list": ALLOW,
-        "projects.create": ALLOW,
-        "tasks.list": ALLOW,
+        "permissions:list": DENY,
+        "roles:list": DENY,
+        "roles:create": DENY,
+        "projects:list": ALLOW,
+        "projects:create": ALLOW,
+        "tasks:list": ALLOW,
     },
     SystemRoleCode.VIEWER: {
-        "permissions.list": ALLOW,  # viewer has all *.read incl. permissions.read
-        "roles.list": ALLOW,
-        "roles.create": DENY,
-        "projects.list": ALLOW,
-        "projects.create": DENY,
-        "tasks.list": ALLOW,
+        "permissions:list": ALLOW,  # viewer has all *:read incl. permissions:read
+        "roles:list": ALLOW,
+        "roles:create": DENY,
+        "projects:list": ALLOW,
+        "projects:create": DENY,
+        "tasks:list": ALLOW,
     },
 }
 
@@ -149,7 +149,7 @@ class TestCustomRole:
             organization=alpha,
             name="Projects Readonly",
             description="",
-            permission_codes=["projects.read", "tasks.read"],
+            permission_codes=["projects:read", "tasks:read"],
             created_by=owner,
         )
 

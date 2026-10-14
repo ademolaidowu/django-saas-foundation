@@ -129,7 +129,7 @@ def two_orgs_with_rbac(
         organization=bravo,
         name="Bravo Custom",
         description="",
-        permission_codes=["projects.read"],
+        permission_codes=["projects:read"],
         created_by=bravo_user,
     )
     # Second Bravo account to be the target of an assignment
